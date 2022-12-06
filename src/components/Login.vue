@@ -5,7 +5,7 @@
         <h1 class="mt-5">Login</h1>
         <hr />
 
-        <form method="post" action="/login" class="needs-validation" novalidate>
+        <form-tag>
           <text-input
             label="Email"
             type="email"
@@ -22,18 +22,20 @@
 
           <hr />
           <input type="submit" value="Login" class="btn btn-primary" />
-        </form>
+        </form-tag>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import FormTag from "./forms/FormTag.vue";
 import TextInput from "./forms/TextInput.vue";
 export default {
   name: "login",
   components: {
     TextInput,
+    FormTag,
   },
   mounted() {
     (() => {
