@@ -5,8 +5,9 @@
         <h1 class="mt-5">Login</h1>
         <hr />
 
-        <form-tag>
+        <form-tag v-on:myevent="submitHandler" name="myform" event="myevent">
           <text-input
+            v-model="email"
             label="Email"
             type="email"
             name="email"
@@ -14,6 +15,7 @@
           ></text-input>
 
           <text-input
+            v-model="password"
             label="Password"
             type="password"
             name="password"
@@ -37,29 +39,16 @@ export default {
     TextInput,
     FormTag,
   },
-  mounted() {
-    (() => {
-      "use strict";
-
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      const forms = document.querySelectorAll(".needs-validation");
-
-      // Loop over them and prevent submission
-      Array.from(forms).forEach((form) => {
-        form.addEventListener(
-          "submit",
-          (event) => {
-            if (!form.checkValidity()) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-
-            form.classList.add("was-validated");
-          },
-          false
-        );
-      });
-    })();
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    submitHandler() {
+      console.log("--> submitHandler called - success! ");
+    },
   },
 };
 </script>

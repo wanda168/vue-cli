@@ -1,5 +1,8 @@
 <template>
   <form
+    @submit.prevent="submit"
+    :ref="name"
+    :event="event"
     autocomplete="off"
     :method="method"
     :action="action"
@@ -13,30 +16,19 @@
 <script>
 export default {
   name: "FormTag",
-  props: ["method", "action"],
-  mounted() {
-    (() => {
-      "use strict";
+  props: ["method", "action", "name", "event"],
+  methods: {
+    submit() {
+      let myForm = this.$refs[this.$props.name];
 
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      const forms = document.querySelectorAll(".needs-validation");
+      if (myForm.checkValidity()) {
+        console.log("--->> My event name::", this.$props["event"]);
+        console.log("Name", this.$props.name);
+        this.$emit(this.$props["event"]);
+      }
 
-      // Loop over them and prevent submission
-      Array.from(forms).forEach((form) => {
-        form.addEventListener(
-          "submit",
-          (event) => {
-            if (!form.checkValidity()) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-
-            form.classList.add("was-validated");
-          },
-          false
-        );
-      });
-    })();
+      myForm.classList.add("was-validated");
+    },
   },
 };
 </script>
