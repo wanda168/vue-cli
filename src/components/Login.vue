@@ -37,6 +37,8 @@
 <script>
 import FormTag from "./forms/FormTag.vue";
 import TextInput from "./forms/TextInput.vue";
+import { store } from "./store.js";
+
 export default {
   name: "login",
   components: {
@@ -47,6 +49,7 @@ export default {
     return {
       email: "",
       password: "",
+      store,
     };
   },
   methods: {
@@ -65,11 +68,12 @@ export default {
 
       fetch("http://localhost:8081/users/login", requestOptions)
         .then((response) => response?.json())
-        .then((data) => {
-          if (data?.error) {
-            console.log("Error:", data?.message);
+        .then((response) => {
+          if (response?.error) {
+            console.log("Error:", response?.message);
           } else {
-            console.log("Token:", data?.data?.token);
+            console.log("Token:", response?.data?.token);
+            store.token = response?.data?.token;
           }
         });
     },
