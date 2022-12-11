@@ -4,15 +4,15 @@
       <div class="col">
         <h1 class="mt-5">Login</h1>
         <hr />
-
-        <form-tag v-on:myevent="submitHandler" name="myform" event="myevent">
+        <form-tag @myevent="submitHandler" name="myform" event="myevent">
           <text-input
             v-model="email"
             label="Email"
             type="email"
             name="email"
             required="true"
-          ></text-input>
+          >
+          </text-input>
 
           <text-input
             v-model="password"
@@ -20,10 +20,12 @@
             type="password"
             name="password"
             required="true"
-          ></text-input>
+          >
+          </text-input>
 
           <hr />
-          <input type="submit" value="Login" class="btn btn-primary" />
+
+          <input type="submit" class="btn btn-primary" value="Login" />
         </form-tag>
       </div>
     </div>
@@ -40,8 +42,8 @@ import notie from "notie";
 export default {
   name: "login",
   components: {
-    TextInput,
     FormTag,
+    TextInput,
   },
   data() {
     return {
@@ -52,7 +54,7 @@ export default {
   },
   methods: {
     submitHandler() {
-      console.log("--> submitHandler called - success! ");
+      console.log("submitHandler called - success!");
 
       const payload = {
         email: this.email,
@@ -65,19 +67,19 @@ export default {
       };
 
       fetch("http://localhost:8081/users/login", requestOptions)
-        .then((response) => response?.json())
+        .then((response) => response.json())
         .then((response) => {
-          if (response?.error) {
-            console.log("Error:", response?.message);
+          if (response.error) {
+            console.log("Error:", response.message);
             notie.alert({
               type: "error",
-              text: response?.message,
+              text: response.message,
               // stay: true,
               // position: 'bottom',
             });
           } else {
-            console.log("Token login:", response?.data?.token?.token);
-            store.token = response?.data?.token?.token;
+            console.log("Token:", response.data.token.token);
+            store.token = response.data.token.token;
 
             store.user = {
               id: response.data.user.id,
@@ -94,9 +96,9 @@ export default {
 
             // set the cookie
             document.cookie =
-              "_site_data" +
+              "_site_data=" +
               JSON.stringify(response.data) +
-              " " +
+              "; " +
               expires +
               "; path=/; SameSite=strict; Secure;";
             router.push("/");
