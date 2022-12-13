@@ -11,6 +11,7 @@
           <tr>
             <td>User</td>
             <td>Email</td>
+            <td>Status</td>
           </tr>
         </thead>
         <tbody>
@@ -21,6 +22,14 @@
               >
             </td>
             <td>{{ u.email }}</td>
+            <td v-if="u.token.id > 0">
+              <span class="badge bg-success" @click="logUserOut(u.id)"
+                >Logged in</span
+              >
+            </td>
+            <td v-else>
+              <span class="badge bg-danger">Not Logged in</span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -32,16 +41,15 @@
 
 <script>
 import Security from "./security.js";
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import notie from "notie";
+import { store } from "./store";
 
 export default {
   data() {
     return {
       users: [],
       ready: false,
+      store,
     };
   },
   beforeMount() {
@@ -56,15 +64,28 @@ export default {
         if (response.error) {
           this.$emit("error", response.message);
         } else {
-          sleep(3000).then(() => {
-            this.users = response.data.users;
-            this.ready = true;
-          });
+          this.users = response.data.users;
+          this.ready = true;
         }
       })
       .catch((error) => {
         this.$emit("error", error);
       });
+  },
+  methods: {
+    logUserOut(id) {
+      if (id !== store.user.id) {
+        notie.confirm({
+          text: "Are you sure you want to log this user out?",
+          submitText: "Log Out",
+          submitCallback: function () {
+            console.log("Would log out user id", id);
+          },
+        });
+      } else {
+        this.$emit("error", "You can't log yourself out!");
+      }
+    },
   },
 };
 </script>
