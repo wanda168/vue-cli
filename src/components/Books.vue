@@ -6,25 +6,26 @@
       </div>
 
       <hr />
-      <div class="filters text-center mb-2">
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 0 }" v-on:click="currentFilter = 0">ALL</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 7 }" v-on:click="currentFilter = 7">CLASSIC</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 2 }" v-on:click="currentFilter = 2">FANTASY</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 6 }" v-on:click="currentFilter = 6">HORROR</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 4 }" v-on:click="currentFilter = 4">THRILLER</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 1 }" v-on:click="currentFilter = 1">SCIENCE FICTION</span>
+      <div class="filters text-center">
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 0 }" v-on:click="setFilter(0)">ALL</span>
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 7 }" v-on:click="setFilter(7)">CLASSIC</span>
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 2 }" v-on:click="setFilter(2)">FANTASY</span>
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 6 }" v-on:click="setFilter(6)">HORROR</span>
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 4 }" v-on:click="setFilter(4)">THRILLER</span>
+        <span class="filter me-1" v-bind:class="{ active: currentFilter === 1 }" v-on:click="setFilter(1)">SCIENCE FICTION</span>
       </div>
       <hr />
 
       <div>
         <div class="card-group">
-          <div class="p-3 d-flex flex-wrap">
+          <transition-group class="p-3 d-flex flex-wrap" tag="div" appear name="books">
+
             <div v-for="b in this.books" :key="b.id">
               <div
                 class="card me-3 ms-1 mb-3"
                 style="width: 10rem"
                 v-if="
-                  b?.gere_ids?.includes(currentFilter) || currentFilter === 0
+                  b.gere_ids?.includes(currentFilter) || currentFilter === 0
                 "
               >
                 <img
@@ -49,7 +50,8 @@
                 </div>
               </div>
             </div>
-          </div>
+
+          </transition-group>
         </div>
       </div>
     </div>
@@ -94,6 +96,10 @@ export default {
 </script>
 
 <style scoped>
+.filters {
+  height: 2.5em;
+}
+
 .filter {
   padding: 6px 6px;
   cursor: pointer;
@@ -106,12 +112,31 @@ export default {
   background: lightgreen;
 }
 
-.filter.hover {
-  background: rgb(238, 39, 39);
+.filter:hover {
+  background: lightgray;
 }
 
 .book-author,
 .book-genre {
   font-size: 0.8rem;
 }
+
+/* transition styles */
+.books-move {
+    transition: all 500ms ease-in-out 50ms;
+}
+
+.books-enter-active {
+    transition: all 500ms ease-in-out;
+}
+
+.books-leave-active {
+    transition: all 500ms ease-in;
+}
+
+.books-enter, .books-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
 </style>
