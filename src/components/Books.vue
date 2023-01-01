@@ -7,19 +7,53 @@
 
       <hr />
       <div class="filters text-center">
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 0 }" v-on:click="setFilter(0)">ALL</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 7 }" v-on:click="setFilter(7)">CLASSIC</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 2 }" v-on:click="setFilter(2)">FANTASY</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 6 }" v-on:click="setFilter(6)">HORROR</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 4 }" v-on:click="setFilter(4)">THRILLER</span>
-        <span class="filter me-1" v-bind:class="{ active: currentFilter === 1 }" v-on:click="setFilter(1)">SCIENCE FICTION</span>
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 0 }"
+          v-on:click="setFilter(0)"
+          >ALL</span
+        >
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 7 }"
+          v-on:click="setFilter(7)"
+          >CLASSIC</span
+        >
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 2 }"
+          v-on:click="setFilter(2)"
+          >FANTASY</span
+        >
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 6 }"
+          v-on:click="setFilter(6)"
+          >HORROR</span
+        >
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 4 }"
+          v-on:click="setFilter(4)"
+          >THRILLER</span
+        >
+        <span
+          class="filter me-1"
+          v-bind:class="{ active: currentFilter === 1 }"
+          v-on:click="setFilter(1)"
+          >SCIENCE FICTION</span
+        >
       </div>
       <hr />
 
       <div>
         <div class="card-group">
-          <transition-group class="p-3 d-flex flex-wrap" tag="div" appear name="books">
-
+          <transition-group
+            class="p-3 d-flex flex-wrap"
+            tag="div"
+            appear
+            name="books"
+          >
             <div v-for="b in this.books" :key="b.id">
               <div
                 class="card me-3 ms-1 mb-3"
@@ -28,11 +62,13 @@
                   b.gere_ids?.includes(currentFilter) || currentFilter === 0
                 "
               >
-                <img
-                  :src="`${this.imgPath}/covers/${b?.slug}.jpg`"
-                  class="card-img-top"
-                  :alt="`cover for ${b.title}`"
-                />
+                <router-link :to="`/books/${b.slug}`">
+                  <img
+                    :src="`${this.imgPath}/covers/${b?.slug}.jpg`"
+                    class="card-img-top"
+                    :alt="`cover for ${b.title}`"
+                  />
+                </router-link>
                 <div class="card-body text-center">
                   <h6 class="card-title">{{ b.title }}</h6>
                   <span class="book-author">{{ b.author.author_name }}</span
@@ -50,7 +86,6 @@
                 </div>
               </div>
             </div>
-
           </transition-group>
         </div>
       </div>
@@ -88,7 +123,7 @@ export default {
       });
   },
   methods: {
-    setFilter: function(filter) {
+    setFilter: function (filter) {
       this.currentFilter = filter;
     },
   },
@@ -123,20 +158,20 @@ export default {
 
 /* transition styles */
 .books-move {
-    transition: all 500ms ease-in-out 50ms;
+  transition: all 500ms ease-in-out 50ms;
 }
 
 .books-enter-active {
-    transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
 }
 
 .books-leave-active {
-    transition: all 500ms ease-in;
+  transition: all 500ms ease-in;
 }
 
-.books-enter, .books-leave-to {
-    opacity: 0;
-    transform: translateY(30px);
+.books-enter,
+.books-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
-
 </style>
