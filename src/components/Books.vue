@@ -97,6 +97,7 @@
 import { store } from "./store";
 
 export default {
+  name: "Books",
   data() {
     return {
       store,
