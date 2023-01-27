@@ -131,6 +131,30 @@ export default {
   name: "BookEdit",
   beforeMount() {
     Security.requireToken();
+
+    // get book for edit if id > 0
+    if (this.$route.params.id > 0) {
+      // editing a book
+    } else {
+      // adding a book
+    }
+
+    // get list of authors for drop down
+    fetch(
+      process.env.VUE_APP_API_URL + "/admin/authors/all",
+      Security.requestOptions()
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          this.$emit("error", data.message);
+        } else {
+          this.authors = data.data;
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   },
   components: {
     "form-tag": FormTag,
@@ -214,7 +238,10 @@ export default {
             id: id,
           };
 
-          fetch(process.env.VUE_APP_API_URL + "/admin/books/delete", Security.requestOptions(payload))
+          fetch(
+            process.env.VUE_APP_API_URL + "/admin/books/delete",
+            Security.requestOptions(payload)
+          )
             .then((response) => response.json())
             .then((data) => {
               if (data.error) {
