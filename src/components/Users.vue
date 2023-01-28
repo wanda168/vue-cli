@@ -9,10 +9,10 @@
       <table v-if="this.ready" class="table table-compact table-striped">
         <thead>
           <tr>
-            <td>User</td>
-            <td>Email</td>
-            <td>Active</td>
-            <td>Status</td>
+            <th>User</th>
+            <th>Email</th>
+            <th>Active</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -23,12 +23,14 @@
               >
             </td>
             <td>{{ u.email }}</td>
+
             <td v-if="u.active === 1">
               <span class="badge bg-success">Active</span>
             </td>
             <td v-else>
               <span class="badge bg-danger">Inactive</span>
             </td>
+
             <td v-if="u.token.id > 0">
               <a href="javascript:void(0);">
                 <span class="badge bg-success" @click="logUserOut(u.id)"
@@ -37,7 +39,7 @@
               </a>
             </td>
             <td v-else>
-              <span class="badge bg-danger">Not Logged in</span>
+              <span class="badge bg-danger">Not logged in</span>
             </td>
           </tr>
         </tbody>
@@ -51,9 +53,10 @@
 <script>
 import Security from "./security.js";
 import notie from "notie";
-import { store } from "./store";
+import { store } from "./store.js";
 
 export default {
+  name: "Users",
   data() {
     return {
       users: [],

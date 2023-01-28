@@ -14,8 +14,8 @@
           <h3 class="mt-3">{{ book.title }}</h3>
           <hr />
           <p>
-            <strong>Author:</strong> {{ book.author.author_name }} <br />
-            <strong>Published:</strong> {{ book.publication_year }} <br />
+            <strong>Author:</strong> {{ book.author.author_name }}<br />
+            <strong>Published:</strong> {{ book.publication_year }}
           </p>
           <p>
             {{ book.description }}
@@ -46,10 +46,8 @@ export default {
         } else {
           this.book = data.data;
           this.ready = true;
+          console.log("Title is", this.book.title);
         }
-      })
-      .catch((error) => {
-        this.$emit("error", error);
       });
   },
 };

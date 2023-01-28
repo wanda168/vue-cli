@@ -44,6 +44,7 @@
           >SCIENCE FICTION</span
         >
       </div>
+
       <hr />
 
       <div>
@@ -56,15 +57,15 @@
           >
             <div v-for="b in this.books" :key="b.id">
               <div
-                class="card me-3 ms-1 mb-3"
+                class="card me-2 ms-1 mb-3"
                 style="width: 10rem"
                 v-if="
-                  b.gere_ids?.includes(currentFilter) || currentFilter === 0
+                  b.genre_ids.includes(currentFilter) || currentFilter === 0
                 "
               >
                 <router-link :to="`/books/${b.slug}`">
                   <img
-                    :src="`${this.imgPath}/covers/${b?.slug}.jpg`"
+                    :src="`${this.imgPath}/covers/${b.slug}.jpg`"
                     class="card-img-top"
                     :alt="`cover for ${b.title}`"
                   />
@@ -79,9 +80,11 @@
                     v-bind:key="g.id"
                   >
                     <em class="me-1"
-                      >{{ g.genre_name }}
-                      <template v-if="index < b.genres.length - 1">,</template>
-                    </em>
+                      >{{ g.genre_name
+                      }}<template v-if="index !== b.genres.length - 1"
+                        >,</template
+                      ></em
+                    >
                   </small>
                 </div>
               </div>
@@ -94,7 +97,7 @@
 </template>
 
 <script>
-import { store } from "./store";
+import { store } from "@/components/store";
 
 export default {
   name: "Books",
@@ -111,11 +114,11 @@ export default {
   beforeMount() {
     fetch(process.env.VUE_APP_API_URL + "/books")
       .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          this.$emit("error", data.message);
+      .then((response) => {
+        if (this.error) {
+          this.$emit("error", response.message);
         } else {
-          this.books = data.data.books;
+          this.books = response.data.books;
           this.ready = true;
         }
       })
@@ -154,7 +157,7 @@ export default {
 
 .book-author,
 .book-genre {
-  font-size: 0.8rem;
+  font-size: 0.8em;
 }
 
 /* transition styles */
@@ -173,6 +176,5 @@ export default {
 .books-enter,
 .books-leave-to {
   opacity: 0;
-  transform: translateY(30px);
 }
 </style>

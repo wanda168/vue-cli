@@ -10,7 +10,7 @@
           name="bookForm"
           event="bookEditEvent"
         >
-          <div v-if="this.book.slug != ''" class="mb-3">
+          <div v-if="this.book.slug !== ''" class="mb-3">
             <img
               :src="`${this.imgPath}/covers/${this.book.slug}.jpg`"
               class="img-fluid img-thumbnail book-cover"
@@ -60,21 +60,21 @@
 
           <text-input
             v-model="book.publication_year"
-            type="text"
+            type="number"
             required="true"
             label="Publication Year"
             :value="book.publication_year"
-            name="publication_year"
+            name="publication-year"
           ></text-input>
 
           <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea
+              required
               v-model="book.description"
               class="form-control"
               id="description"
               rows="3"
-              required
             ></textarea>
           </div>
 
@@ -82,12 +82,12 @@
             <label for="genres" class="form-label">Genres</label>
             <select
               ref="genres"
-              v-model="this.book.genre_ids"
-              class="form-select"
               id="genres"
-              size="7"
-              multiple
+              class="form-select"
               required
+              size="7"
+              v-model="this.book.genre_ids"
+              multiple
             >
               <option v-for="g in this.genres" :value="g.value" :key="g.value">
                 {{ g.text }}
@@ -99,20 +99,21 @@
 
           <div class="float-start">
             <input type="submit" class="btn btn-primary me-2" value="Save" />
-            <router-link to="/admin/books" class="btn btn-secondary"
+            <router-link to="/admin/books" class="btn btn-outline-secondary"
               >Cancel</router-link
             >
           </div>
-
           <div class="float-end">
             <a
-              v-if="this.book.id != 0"
+              v-if="this.book.id > 0"
               class="btn btn-danger"
               href="javascript:void(0);"
               @click="confirmDelete(this.book.id)"
-              >Delete</a
             >
+              Delete
+            </a>
           </div>
+          <div class="clearfix"></div>
         </form-tag>
       </div>
     </div>
@@ -121,9 +122,9 @@
 
 <script>
 import Security from "./security.js";
-import FormTag from "./forms/FormTag.vue";
-import TextInput from "./forms/TextInput.vue";
-import SelectInput from "./forms/SelectInput.vue";
+import FormTag from "@/components/forms/FormTag";
+import TextInput from "@/components/forms/TextInput";
+import SelectInput from "@/components/forms/SelectInput";
 import router from "@/router";
 import notie from "notie";
 
@@ -133,16 +134,33 @@ export default {
     Security.requireToken();
 
     // get book for edit if id > 0
-    if (this.$route.params.id > 0) {
+    if (this.$route.params.bookId > 0) {
       // editing a book
-    } else {
-      // adding a book
+      fetch(
+        process.env.VUE_APP_API_URL +
+          "/admin/books/" +
+          this.$route.params.bookId,
+        Security.requestOptions("")
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            this.$emit("error", data.message);
+          } else {
+            this.book = data.data;
+            let genreArray = [];
+            for (let i = 0; i < this.book.genres.length; i++) {
+              genreArray.push(this.book.genres[i].id);
+            }
+            this.book.genre_ids = genreArray;
+          }
+        });
     }
 
     // get list of authors for drop down
     fetch(
       process.env.VUE_APP_API_URL + "/admin/authors/all",
-      Security.requestOptions()
+      Security.requestOptions("")
     )
       .then((response) => response.json())
       .then((data) => {
@@ -151,9 +169,6 @@ export default {
         } else {
           this.authors = data.data;
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
       });
   },
   components: {
@@ -167,7 +182,7 @@ export default {
         id: 0,
         title: "",
         author_id: 0,
-        publication_year: 0,
+        publication_year: null,
         description: "",
         cover: "",
         slug: "",
@@ -175,13 +190,13 @@ export default {
         genre_ids: [],
       },
       authors: [],
-      imgPath: process.env.VUE_APP_IMG_PATH,
+      imgPath: process.env.VUE_APP_IMAGE_URL,
       genres: [
         { value: 1, text: "Science Fiction" },
         { value: 2, text: "Fantasy" },
         { value: 3, text: "Romance" },
         { value: 4, text: "Thriller" },
-        { value: 5, text: "Mystry" },
+        { value: 5, text: "Mystery" },
         { value: 6, text: "Horror" },
         { value: 7, text: "Classic" },
       ],
@@ -193,12 +208,14 @@ export default {
         id: this.book.id,
         title: this.book.title,
         author_id: parseInt(this.book.author_id, 10),
-        publication_year: this.book.publication_year,
+        publication_year: parseInt(this.book.publication_year, 10),
         description: this.book.description,
         cover: this.book.cover,
         slug: this.book.slug,
         genre_ids: this.book.genre_ids,
       };
+
+      // console.log(payload);
 
       fetch(
         `${process.env.VUE_APP_API_URL}/admin/books/save`,
@@ -207,7 +224,7 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
-            this.$emit("error", data.error);
+            this.$emit("error", data.message);
           } else {
             this.$emit("success", "Changes saved");
             router.push("/admin/books");
@@ -218,14 +235,17 @@ export default {
         });
     },
     loadCoverImage() {
-      let file = this.$refs.coverInput.files[0];
+      // get a reference to the input using ref
+      const file = this.$refs.coverInput.files[0];
 
-      let reader = new FileReader();
-      reader.onload = () => {
+      // encode the file using the FileReader API
+      const reader = new FileReader();
+      reader.onloadend = () => {
         const base64String = reader.result
           .replace("data:", "")
           .replace(/^.+,/, "");
         this.book.cover = base64String;
+        // alert(base64String);
       };
       reader.readAsDataURL(file);
     },
@@ -250,9 +270,6 @@ export default {
                 this.$emit("success", "Book deleted");
                 router.push("/admin/books");
               }
-            })
-            .catch((error) => {
-              this.$emit("error", error);
             });
         },
       });
@@ -260,3 +277,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.book-cover {
+  max-width: 10em;
+}
+</style>

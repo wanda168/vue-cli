@@ -19,7 +19,7 @@
                   b.title
                 }}</router-link>
               </td>
-            <td>{{ b.author?.author_name }}</td>
+              <td>{{ b.author.author_name }}</td>
             </tr>
           </tbody>
         </table>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Security from './security.js'
+import Security from "./security.js";
 
 export default {
   name: "BooksAdmin",
@@ -51,10 +51,7 @@ export default {
           this.books = data.data.books;
           this.ready = true;
         }
-      })
-      .catch((error) => {
-        this.$emit("error", error);
       });
-  }
+  },
 };
 </script>

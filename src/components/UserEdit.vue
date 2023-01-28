@@ -5,6 +5,7 @@
         <h1 class="mt-3">User</h1>
         <hr />
         <form-tag
+          v-if="this.ready"
           @userEditEvent="submitHandler"
           name="userform"
           event="userEditEvent"
@@ -81,7 +82,7 @@
 
           <hr />
           <div class="float-start">
-            <input type="submit" value="Save" class="btn btn-primary me-2" />
+            <input type="submit" class="btn btn-primary me-2" value="Save" />
             <router-link to="/admin/users" class="btn btn-outline-secondary"
               >Cancel</router-link
             >
@@ -101,6 +102,8 @@
           </div>
           <div class="clearfix"></div>
         </form-tag>
+
+        <p v-else>Loading...</p>
       </div>
     </div>
   </div>
@@ -115,6 +118,7 @@ import { store } from "./store";
 import router from "./../router/index.js";
 
 export default {
+  name: "UserEdit",
   beforeMount() {
     Security.requireToken();
 
@@ -132,10 +136,13 @@ export default {
             this.$emit("error", data.message);
           } else {
             this.user = data;
+            this.ready = true;
             // we want password to be empty for existing users
             this.user.password = "";
           }
         });
+    } else {
+      this.ready = true;
     }
   },
   data() {
@@ -149,6 +156,7 @@ export default {
         active: 0,
       },
       store,
+      ready: false,
     };
   },
   components: {
@@ -188,8 +196,6 @@ export default {
         text: "Are you sure you want to delete this user?",
         submitText: "Delete",
         submitCallback: function () {
-          console.log("will delete ", id);
-
           let payload = {
             id: id,
           };
@@ -204,6 +210,7 @@ export default {
                 this.$emit("error", data.message);
               } else {
                 this.$emit("success", "User deleted");
+                router.push("/admin/users");
               }
             });
         },

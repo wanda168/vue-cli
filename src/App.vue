@@ -1,7 +1,14 @@
 <template>
   <Header />
   <div>
-    <router-view v-slot="{ Component}" :key="componentKey" @success="success" @error="error" @warning="warning" @forceUpdate="forceUpdate">
+    <router-view
+      v-slot="{ Component }"
+      :key="componentKey"
+      @success="success"
+      @error="error"
+      @warning="warning"
+      @forceUpdate="forceUpdate"
+    >
       <keep-alive include="Books">
         <component :is="Component" />
       </keep-alive>
@@ -59,21 +66,18 @@ export default {
         text: msg,
       });
     },
-
     error(msg) {
       notie.alert({
         type: "error",
         text: msg,
       });
     },
-
     warning(msg) {
       notie.alert({
         type: "warning",
         text: msg,
       });
     },
-
     forceUpdate() {
       this.componentKey += 1;
     },

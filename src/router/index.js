@@ -7,7 +7,7 @@ import BooksAdmin from "./../components/BooksAdmin.vue";
 import BookEdit from "./../components/BookEdit.vue";
 import Users from "./../components/Users.vue";
 import User from "./../components/UserEdit.vue";
-import Security from "./../components/security";
+import Security from "../components/security";
 
 const routes = [
   {
@@ -47,13 +47,21 @@ const routes = [
   },
   {
     path: "/admin/users/:userId",
-    name: "User",
+    name: "UserEdit",
     component: User,
   },
 ];
 
-const router = createRouter({ history: createWebHistory(), routes });
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+// this function will run every time a user navigates to any part of the site,
+// and call checkToken(). If the user has a token in store.token, then we validate
+// that token.
 router.beforeEach(() => {
   Security.checkToken();
 });
+
 export default router;
